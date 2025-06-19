@@ -38,13 +38,34 @@ class DatabaseConnection:
             self.__cur.execute("""INSERT INTO master_password (password_hash) VALUES (%s);""", (hash,))
             self.__conn.commit()
 
+    def storeSalt(self, salt):
+        self.__cur.execute("""CREATE TABLE IF NOT EXISTS salt (
+            id SERIAL PRIMARY KEY,
+            salt_value BYTEA NOT NULL
+            );
+        """)
+        self.__cur.execute("""SELECT COUNT(*) FROM salt;""")
+        count = self.__cur.fetchone()[0]
+
+        if count > 0:
+            return
+        else:
+            self.__cur.execute("""INSERT INTO salt (salt_value) VALUES (%s);""", (salt,))
+            self.__conn.commit()
+
+    def fetchSalt(self):
+        self.__cur.execute("""SELECT salt_value FROM salt LIMIT 1;""")
+        stored_salt = self.__cur.fetchone()[0]
+        return stored_salt
+
     def fetchHash(self):
         self.__cur.execute("""SELECT password_hash FROM master_password LIMIT 1;""")
         stored_hash = self.__cur.fetchone()[0]
         return stored_hash
 
-    def insertNew(site: str, pw: str):
-        pass
+    def insertNew(self, site: str, pw: str):
+        self.__cur.execute("""INSERT INTO pws (site, password) VALUES (%s, %s);""", (site, pw))
+        self.__conn.commit()
 
     def closeConnection(self):
         self.__cur.close()

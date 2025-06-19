@@ -10,8 +10,11 @@ def main():
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
     root = customtkinter.CTk()
-    root.geometry("750x1000")
+    root.geometry("500x350")
     
+    db_instance = {}
+    key = {}
+    salt = None
     
     def handle_login(creds, app):
         try:
@@ -19,9 +22,13 @@ def main():
             database.initConnection()
             database.createTable()
             database.storeHash(cry.hash_password(creds["master_password"]))
+            database.storeSalt(cry.generate_salt())
             stored_hash = database.fetchHash()
+            salt = bytes(database.fetchSalt())
 
             if bcrypt.checkpw(creds["master_password"].encode(), bytes(stored_hash)):
+                db_instance['db'] = database
+                key['key'] = cry.derive_key(creds["master_password"], salt)
                 app.authenticationSuccesfull()
             else:
                 print("Mee vittuu siitä")
@@ -30,7 +37,7 @@ def main():
             print("Login Failed")
             exit
     
-    LoginWindow(root, switch=lambda: MainWindow(root), handle_login=handle_login)
+    LoginWindow(root, switch=lambda: MainWindow(root, key['key'], db_instance['db']),  handle_login=handle_login)
     root.mainloop()
     
 

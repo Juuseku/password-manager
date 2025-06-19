@@ -13,7 +13,11 @@ This tool is made just for educational purposes and I do not intend it it to be 
 User is prompted with login window which asks for inputs:
 - username
 - database password
-- master password.
+- master password
 
-On the first use, master password is hashed (using bcrypt) and stored into the database and checked against the stored hash for authentication on subsequent launches. This way the master password is not visible or stored in plain text in any point during the process.
+On the first use, master password is hashed (using bcrypt) and stored into the database and checked against the stored hash for authentication on subsequent launches. This way the master password is not visible or stored in plain text in any point during the process. Program creates salt as well on the first launch. These both happen only once and the values are stored in their own respective tables.
+
+
+
+
 
