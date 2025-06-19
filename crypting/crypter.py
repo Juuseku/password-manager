@@ -31,11 +31,15 @@ def derive_key(master_password: str, salt: bytes):
     return kdf.derive(master_password.encode())
 
 def encrypt_password(password: str, key: bytes):
-    print(f"TÄSSÄ ON {key}")
     aesgcm = AESGCM(key)
     nonce = os.urandom(12)
     ct = aesgcm.encrypt(nonce, password.encode(), None)
     return nonce, ct
+
+def decrypt_password(nonce: bytes, cipher: bytes, key: bytes):
+    aesgcm = AESGCM(key)
+    pt = aesgcm.decrypt(nonce, cipher, None)
+    return pt.decode()
 
 def generate_salt():
     return os.urandom(16)

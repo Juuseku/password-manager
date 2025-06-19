@@ -18,7 +18,8 @@ class DatabaseConnection:
     def createTable(self):
         self.__cur.execute("""CREATE TABLE IF NOT EXISTS pws (
                     site VARCHAR(255),
-                    password VARCHAR(255)
+                    password BYTEA NOT NULL,
+                    nonce BYTEA NOT NULL
                     );
                 """)
         self.__conn.commit()
@@ -63,9 +64,17 @@ class DatabaseConnection:
         stored_hash = self.__cur.fetchone()[0]
         return stored_hash
 
-    def insertNew(self, site: str, pw: str):
-        self.__cur.execute("""INSERT INTO pws (site, password) VALUES (%s, %s);""", (site, pw))
+    def insertNew(self, site: str, nonce: bytes, cipher: bytes):
+        self.__cur.execute("""INSERT INTO pws (site, password, nonce) VALUES (%s, %s, %s);""", (site, cipher, nonce))
         self.__conn.commit()
+
+    def fetchPassword(self, site):
+        self.__cur.execute("""SELECT password, nonce FROM pws WHERE site = (%s) LIMIT 1;""", (site,))
+        row = self.__cur.fetchone()
+        cipher, nonce = row
+        return nonce, cipher
+
+
 
     def closeConnection(self):
         self.__cur.close()

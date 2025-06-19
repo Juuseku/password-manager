@@ -13,16 +13,17 @@ class MainWindow:
         self.frame = customtkinter.CTkFrame(master=self.root)
         self.setup_ui()
         self.key = key
-        print(key)
 
 
     def insert(self):
-        encrypted_pw = cry.encrypt_password(cry.generate_password(), self.key)
-        self.database.insertNew(self.entry2.get(), encrypted_pw)
+        nonce, cipher = cry.encrypt_password(cry.generate_password(), self.key)
+        self.database.insertNew(self.entry2.get(), nonce, cipher)
         
 
     def fetch(self):
-        pass
+        nonce, cipher = self.database.fetchPassword(self.entry1.get())
+        pw = cry.decrypt_password(nonce, cipher, self.key)
+        print(pw)
 
     def setup_ui(self):
         self.frame.pack(pady=20, padx=60, fill='both', expand=True)
