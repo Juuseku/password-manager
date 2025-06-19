@@ -33,10 +33,10 @@ class DatabaseConnection:
         count = self.__cur.fetchone()[0]
 
         if count > 0:
-            raise Exception("Master password already set.")
-        
-        self.__cur.execute("""INSERT INTO master_password (password_hash) VALUES (%s);""", (hash,))
-        self.__conn.commit()
+            return
+        else:
+            self.__cur.execute("""INSERT INTO master_password (password_hash) VALUES (%s);""", (hash,))
+            self.__conn.commit()
 
     def fetchHash(self):
         self.__cur.execute("""SELECT password_hash FROM master_password LIMIT 1;""")
