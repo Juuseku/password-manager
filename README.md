@@ -28,7 +28,7 @@ On every login, a key is derived from the user-prompted master password and the 
 
 1. Every password is randomly generated from ASCII letters, digits and punctuation.
 2. Password is encrypted with AES-GCM:
-    - A **key** is derived from the master password and salt using 'PBKDF2HMAX':
+    - A **key** is derived from the master password and salt using 'PBKDF2HMAC':
       - Hash function: SHA-256
       - Output length: 32 bytes
       - Iterations: 100,000
