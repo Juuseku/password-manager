@@ -9,21 +9,27 @@ class MainWindow:
 
         self.database = database
         self.root = root
-        self.root.geometry("500x200")
+        self.root.geometry("500x275")
         self.frame = customtkinter.CTkFrame(master=self.root)
         self.setup_ui()
         self.key = key
 
 
     def insert(self):
-        nonce, cipher = cry.encrypt_password(cry.generate_password(), self.key)
-        self.database.insertNew(self.entry2.get(), nonce, cipher)
+        if cry.checkExisting(self.entry2.get(), self.database):
+            print("already exists")
+        else:
+            nonce, cipher = cry.encrypt_password(cry.generate_password(), self.key)
+            self.database.insertNew(self.entry2.get(), nonce, cipher)
         
 
     def fetch(self):
         nonce, cipher = self.database.fetchPassword(self.entry1.get())
         pw = cry.decrypt_password(nonce, cipher, self.key)
         print(pw)
+
+    def printAll(self):
+        print(self.database.fetchAllSites())
 
     def setup_ui(self):
         self.frame.pack(pady=20, padx=60, fill='both', expand=True)
@@ -64,3 +70,11 @@ class MainWindow:
 
         button2 = customtkinter.CTkButton(master=button_frame, text="Store new password", command=self.insert)
         button2.pack(pady=12, side="right", padx=10)
+
+
+        #All 'accounts' list
+        all_frame = customtkinter.CTkFrame(master=self.frame)
+        all_frame.pack(pady=5, padx=10, fill="x")
+
+        button3 = customtkinter.CTkButton(master=all_frame, text="Print all accounts", command=self.printAll)
+        button3.pack(pady=12, padx=10)

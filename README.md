@@ -22,7 +22,7 @@ On the first use, master password is hashed (using bcrypt) and stored into the d
 
 ### Subsequent launches
 
-On every login, a key is derived from the user-prompted master password and the generated salt. The key is used to encrypt the stored passwords. Every password that is stored is randomly generated before encryption and the encrypted password is stored with the site it is used on into a Postgres database.
+On every login, a key is derived from the user-prompted master password and the generated salt. The key is used to encrypt the stored passwords. Every password that is stored is randomly generated before encryption and the encrypted password is stored with the site it is used on into a Postgres database. No identical sites can be added to the database and the SQL queries are parameterized to prevent SQL injections.
 
 ### Password handling
 
@@ -34,6 +34,8 @@ On every login, a key is derived from the user-prompted master password and the 
       - Iterations: 100,000
     - A random **nonce** is generated and used for each encryption 
 3. cyphertext and the nonce are both stored into the Postgres database along with the associated site
+
+
 
 
 

@@ -24,7 +24,7 @@ class DatabaseConnection:
                 """)
         self.__conn.commit()
 
-    def storeHash(self, hash:str):
+    def storeHash(self, hash: bytes):
         self.__cur.execute("""CREATE TABLE IF NOT EXISTS master_password (
             id SERIAL PRIMARY KEY,
             password_hash BYTEA NOT NULL       
@@ -73,9 +73,13 @@ class DatabaseConnection:
         row = self.__cur.fetchone()
         cipher, nonce = row
         return nonce, cipher
-
-
-
+    
+    def fetchAllSites(self):
+        self.__cur.execute("""SELECT site FROM pws;""")
+        rows = self.__cur.fetchall()
+        return [row[0] for row in rows]
+        
+        
     def closeConnection(self):
         self.__cur.close()
         self.__conn.close()

@@ -5,6 +5,7 @@ import os
 import bcrypt
 import string
 import secrets
+import html
 
 def hash_password(password: str):
     salt = bcrypt.gensalt()
@@ -43,3 +44,9 @@ def decrypt_password(nonce: bytes, cipher: bytes, key: bytes):
 
 def generate_salt():
     return os.urandom(16)
+
+def checkExisting(input: str, database):
+    existing = database.fetchAllSites()
+    if input in existing:
+        return True
+    return False
